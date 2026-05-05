@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Hóa 10 - Cánh Diều</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 15px;
+            color: var(--text-sub);
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 12px;
+            gap: 4px;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-sub);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--bg-card);
+            color: var(--primary-dark);
+            box-shadow: var(--shadow);
+        }
+
+        /* Progress & Stats */
+        .progress-bar-bg {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #34d399);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-num {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        #s-correct {
+            color: var(--success);
+        }
+
+        #s-wrong {
+            color: var(--danger);
+        }
+
+        /* Card Style */
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .eq-number {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .eq-question {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+
+        .eq-hint {
+            font-size: 14px;
+            color: var(--text-sub);
+            background: #f1f5f9;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #cbd5e1;
+        }
+
+        .eq-type-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+
+        .badge-cl {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-hcl {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #f0fdf4;
+            border-radius: 16px;
+            border: 1px solid #bbf7d0;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .answer-box.show {
+            display: block;
+        }
+
+        .answer-main {
+            font-size: 18px;
+            color: #166534;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .answer-condition {
+            font-size: 12px;
+            background: #22c55e;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-wrong {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Overview List */
+        .ov-item {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .ov-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .ov-dot.correct {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .ov-dot.wrong {
+            background: var(--danger);
+            box-shadow: 0 0 8px var(--danger);
+        }
+
+        .ov-dot.unseen {
+            background: #cbd5e1;
+        }
+
+        .ov-eq {
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 15px;
+            margin: 5px 0;
+        }
+
+        /* Success State */
+        .complete-box {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #ecfdf5;
+            border: 4px solid var(--success);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>Hóa Học 10 • Mastery</h2>
+            <p>Chuyên đề Cl₂ và HCl - Kết nối tri thức & Cánh Diều</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('practice')">Luyện tập</button>
+            <button class="tab" onclick="switchTab('overview')">Thư viện đáp án</button>
+        </div>
+
+        <div id="tab-practice">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="prog" style="width:0%"></div>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num" id="s-correct">0</div>
+                    <div class="stat-label">Đúng</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="s-wrong">0</div>
+                    <div class="stat-label">Sai</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="s-left">21</div>
+                    <div class="stat-label">Còn lại</div>
+                </div>
+            </div>
+
+            <div id="practice-card" class="card">
+                <div id="eq-badge" class="eq-type-badge"></div>
+                <div class="eq-number" id="eq-num">Câu 1</div>
+                <div class="eq-question" id="eq-q"></div>
+                <div class="eq-hint" id="eq-hint"></div>
+
+                <div class="answer-box" id="ans-box">
+                    <div class="answer-condition" id="ans-cond"></div>
+                    <div class="answer-main" id="ans-main"></div>
+                    <div style="font-size: 13px; color: var(--text-sub);" id="ans-note"></div>
+                </div>
+
+                <div class="btn-row" id="reveal-row">
+                    <button class="btn btn-primary" onclick="revealAnswer()">🔍 Xem đáp án</button>
+                </div>
+                <div class="btn-row" id="result-row" style="display:none">
+                    <button class="btn btn-success" onclick="markResult(true)">✓ Tôi đã đúng</button>
+                    <button class="btn btn-wrong" onclick="markResult(false)">✗ Tôi làm sai</button>
+                </div>
+            </div>
+
+            <div id="complete-card" class="card complete-box" style="display:none">
+                <div class="score-circle">
+                    <div class="score-big" id="final-score"
+                        style="font-size:32px; font-weight:800; color:var(--success)">0</div>
+                    <div class="score-small" style="font-weight:600; color:var(--text-sub)">/ 21</div>
+                </div>
+                <h3 style="margin-bottom:10px">Tuyệt vời!</h3>
+                <p id="final-msg" style="margin-bottom:20px"></p>
+                <button class="btn btn-primary" onclick="resetAll()">Luyện lại từ đầu</button>
+            </div>
+        </div>
+
+        <div id="tab-overview" style="display:none">
+            <div id="ov-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // Giữ nguyên logic JavaScript của bạn
+        const equations = [
+            { type: 'cl', q: 'Cl₂ + Fe → ?', hint: 'Cl₂ dư, Fe bị oxi hóa lên +3', cond: 'to°', ans: '2Fe + 3Cl₂ → 2FeCl₃', note: 'Lưu ý: Cl₂ luôn oxi hóa Fe lên FeCl₃ (khác HCl tạo FeCl₂)' },
+            { type: 'cl', q: 'Cl₂ + Na → ?', hint: 'Na là kim loại kiềm, phản ứng mạnh', cond: '', ans: '2Na + Cl₂ → 2NaCl', note: 'Phản ứng xảy ra mạnh, Na bốc cháy trong Cl₂' },
+            { type: 'cl', q: 'Cl₂ + Cu → ?', hint: 'Cu bị oxi hóa bởi Cl₂', cond: 'to°', ans: 'Cu + Cl₂ → CuCl₂', note: 'Đồng tác dụng Cl₂ (không tác dụng HCl loãng)' },
+            { type: 'cl', q: 'Cl₂ + H₂ → ?', hint: 'Phản ứng tổng hợp HCl, điều kiện ánh sáng hoặc nhiệt', cond: 'ánh sáng hoặc to°', ans: 'H₂ + Cl₂ → 2HCl', note: 'Phản ứng nổ mạnh khi có tia sáng – tỉ lệ 1:1' },
+            { type: 'cl', q: 'Cl₂ + NaBr → ?', hint: 'Cl₂ mạnh hơn Br₂, đẩy Br ra khỏi muối', cond: '', ans: '2NaBr + Cl₂ → 2NaCl + Br₂', note: 'Halogen mạnh hơn đẩy halogen yếu hơn ra khỏi muối' },
+            { type: 'cl', q: 'Cl₂ + KI → ?', hint: 'Cl₂ mạnh hơn I₂', cond: '', ans: '2KI + Cl₂ → 2KCl + I₂', note: 'Dùng để nhận biết Cl₂: thử với hồ tinh bột + KI → xanh tím' },
+            { type: 'cl', q: 'Cl₂ + NaOH (loãng, nhiệt độ thường) → ?', hint: 'Phản ứng tạo nước Javel', cond: 'nhiệt độ thường', ans: 'Cl₂ + 2NaOH → NaCl + NaClO + H₂O', note: 'Sản phẩm: NaCl + NaClO (nước Javel). Cl₂ vừa là chất oxh vừa là chất khử (dị phân)' },
+            { type: 'cl', q: 'Cl₂ + H₂O → ?', hint: 'Phản ứng thuận nghịch, tạo axit yếu HClO', cond: '', ans: 'Cl₂ + H₂O ⇌ HCl + HClO', note: 'Phản ứng thuận nghịch (⇌). HClO là axit yếu có tính oxi hóa mạnh' },
+            { type: 'hcl', q: 'HCl + Fe → ?', hint: 'Fe đứng trước H trong dãy hoạt động, HCl loãng chỉ tạo FeCl₂', cond: '', ans: 'Fe + 2HCl → FeCl₂ + H₂↑', note: 'HCl loãng: Fe → FeCl₂ (Fe²⁺). Ngược với Cl₂ tạo FeCl₃ (Fe³⁺)' },
+            { type: 'hcl', q: 'HCl + Mg → ?', hint: 'Mg đứng trước H', cond: '', ans: 'Mg + 2HCl → MgCl₂ + H₂↑', note: 'Phản ứng xảy ra mạnh hơn Fe vì Mg hoạt động hơn' },
+            { type: 'hcl', q: 'HCl + Al → ?', hint: 'Al hóa trị III, cân bằng cẩn thận', cond: '', ans: '2Al + 6HCl → 2AlCl₃ + 3H₂↑', note: 'Tỉ lệ Al : HCl : H₂ = 2 : 6 : 3. Chú ý hệ số!' },
+            { type: 'hcl', q: 'HCl + NaOH → ?', hint: 'Phản ứng trung hòa acid-base', cond: '', ans: 'NaOH + HCl → NaCl + H₂O', note: 'Phản ứng trung hòa, tỉ lệ 1:1' },
+            { type: 'hcl', q: 'HCl + Mg(OH)₂ → ?', hint: 'Base + acid → muối + nước', cond: '', ans: 'Mg(OH)₂ + 2HCl → MgCl₂ + 2H₂O', note: 'Mg(OH)₂ có 2 nhóm OH nên cần 2 mol HCl' },
+            { type: 'hcl', q: 'HCl + CuO → ?', hint: 'Oxide base + acid → muối + nước', cond: '', ans: 'CuO + 2HCl → CuCl₂ + H₂O', note: 'CuO (đen) tan trong HCl tạo CuCl₂ (xanh lam)' },
+            { type: 'hcl', q: 'HCl + Fe₂O₃ → ?', hint: 'Oxide sắt(III) + acid → FeCl₃', cond: '', ans: 'Fe₂O₃ + 6HCl → 2FeCl₃ + 3H₂O', note: 'Fe₂O₃ (nâu đỏ) → FeCl₃. Tỉ lệ 1 : 6 : 2 : 3' },
+            { type: 'hcl', q: 'HCl + Fe₃O₄ → ?', hint: 'Fe₃O₄ = FeO.Fe₂O₃, tạo hỗn hợp FeCl₂ và FeCl₃', cond: '', ans: 'Fe₃O₄ + 8HCl → FeCl₂ + 2FeCl₃ + 4H₂O', note: 'Khó! Fe₃O₄ tạo đồng thời FeCl₂ (1 mol) và FeCl₃ (2 mol)' },
+            { type: 'hcl', q: 'HCl + CaCO₃ → ?', hint: 'Muối carbonate + acid mạnh → CO₂ bay ra', cond: '', ans: 'CaCO₃ + 2HCl → CaCl₂ + CO₂↑ + H₂O', note: 'Đá vôi tan trong HCl, có khí CO₂ sủi bọt' },
+            { type: 'hcl', q: 'HCl + AgNO₃ → ?', hint: 'Phản ứng tạo kết tủa trắng AgCl, dùng để nhận biết Cl⁻', cond: '', ans: 'AgNO₃ + HCl → AgCl↓ + HNO₃', note: 'AgCl kết tủa trắng, không tan trong HNO₃. Dùng nhận biết ion Cl⁻' },
+            { type: 'hcl', q: 'HCl + NaHCO₃ → ?', hint: 'Bicarbonate + acid → CO₂', cond: '', ans: 'NaHCO₃ + HCl → NaCl + CO₂↑ + H₂O', note: 'Tỉ lệ 1:1. NaHCO₃ phản ứng nhẹ nhàng hơn Na₂CO₃' },
+            { type: 'hcl', q: 'HCl (đặc) + KMnO₄ → ?', hint: 'Phản ứng oxi hóa khử, tạo Cl₂. Rất khó – cần học thuộc!', cond: '', ans: '2KMnO₄ + 16HCl → 2KCl + 2MnCl₂ + 5Cl₂↑ + 8H₂O', note: 'Dùng để điều chế Cl₂ trong PTN. Mn: +7 → +2. Hệ số: 2,16,2,2,5,8' },
+            { type: 'hcl', q: 'HCl (đặc) + MnO₂ → ?', hint: 'Phản ứng điều chế Cl₂ phổ biến trong PTN', cond: 'to°, HCl đặc', ans: 'MnO₂ + 4HCl(đặc) → MnCl₂ + Cl₂↑ + 2H₂O', note: 'Mn: +4 → +2. Cần HCl đặc và đun nóng. Tỉ lệ: 1 : 4 : 1 : 1 : 2' },
+        ];
+
+        let current = 0; let correct = 0; let wrong = 0;
+        let results = new Array(equations.length).fill(null);
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['practice', 'overview'][i] === tab));
+            document.getElementById('tab-practice').style.display = tab === 'practice' ? '' : 'none';
+            document.getElementById('tab-overview').style.display = tab === 'overview' ? '' : 'none';
+            if (tab === 'overview') renderOverview();
+        }
+
+        function renderQuestion() {
+            if (current >= equations.length) {
+                document.getElementById('practice-card').style.display = 'none';
+                document.getElementById('complete-card').style.display = '';
+                document.getElementById('final-score').textContent = correct;
+                return;
+            }
+            const eq = equations[current];
+            document.getElementById('eq-num').textContent = `Câu ${current + 1} / ${equations.length}`;
+            const badge = document.getElementById('eq-badge');
+            badge.textContent = eq.type === 'cl' ? 'Clo (Cl₂)' : 'Axit Clohydric (HCl)';
+            badge.className = 'eq-type-badge ' + (eq.type === 'cl' ? 'badge-cl' : 'badge-hcl');
+            document.getElementById('eq-q').textContent = eq.q;
+            document.getElementById('eq-hint').textContent = '💡 ' + eq.hint;
+            document.getElementById('ans-box').classList.remove('show');
+            document.getElementById('reveal-row').style.display = '';
+            document.getElementById('result-row').style.display = 'none';
+            updateStats();
+        }
+
+        function revealAnswer() {
+            const eq = equations[current];
+            document.getElementById('ans-cond').textContent = eq.cond ? 'Điều kiện: ' + eq.cond : 'Điều kiện: Nhiệt độ thường';
+            document.getElementById('ans-main').textContent = eq.ans;
+            document.getElementById('ans-note').textContent = 'Ghi chú: ' + eq.note;
+            document.getElementById('ans-box').classList.add('show');
+            document.getElementById('reveal-row').style.display = 'none';
+            document.getElementById('result-row').style.display = '';
+        }
+
+        function markResult(isCorrect) {
+            results[current] = isCorrect;
+            if (isCorrect) correct++; else wrong++;
+            current++;
+            renderQuestion();
+        }
+
+        function updateStats() {
+            document.getElementById('s-correct').textContent = correct;
+            document.getElementById('s-wrong').textContent = wrong;
+            document.getElementById('s-left').textContent = equations.length - current;
+            document.getElementById('prog').style.width = (current / equations.length * 100) + '%';
+        }
+
+        function resetAll() {
+            current = 0; correct = 0; wrong = 0;
+            results = new Array(equations.length).fill(null);
+            document.getElementById('complete-card').style.display = 'none';
+            document.getElementById('practice-card').style.display = '';
+            renderQuestion();
+        }
+
+        function renderOverview() {
+            const grid = document.getElementById('ov-grid');
+            grid.innerHTML = '';
+            equations.forEach((eq, i) => {
+                const r = results[i];
+                const dotClass = r === null ? 'unseen' : r ? 'correct' : 'wrong';
+                const div = document.createElement('div');
+                div.className = 'ov-item';
+                div.innerHTML = `
+      <div class="ov-dot ${dotClass}"></div>
+      <div style="flex:1">
+        <div style="font-size:13px; color:var(--text-sub)">Câu ${i + 1}: ${eq.q}</div>
+        <div class="ov-eq">${eq.ans}</div>
+        <div style="font-size:12px; color:var(--text-sub)">${eq.note}</div>
+      </div>`;
+                grid.appendChild(div);
+            });
+        }
+
+        renderQuestion();
+    </script>
+</body>
+
+</html>
